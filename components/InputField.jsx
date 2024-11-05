@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
 export default InputField = ({
@@ -8,12 +7,21 @@ export default InputField = ({
   isPassword,
   children,
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <View style={isPassword ? styles.passwordContainer : styles.inputContainer}>
+    <View
+      style={[
+        isPassword ? styles.passwordContainer : styles.inputContainer,
+        isFocused && styles.focusedBorder,
+      ]}
+    >
       <TextInput
         style={isPassword ? styles.inputPassword : styles.input}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
       />
       {children}
     </View>
@@ -42,6 +50,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 43,
+  },
+  focusedBorder: {
+    borderColor: "#FF6C00",
   },
   input: {
     fontSize: 16,
