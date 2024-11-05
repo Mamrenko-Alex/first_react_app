@@ -6,6 +6,7 @@ export default InputField = ({
   secureTextEntry,
   isPassword,
   children,
+  onChangeText,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -22,6 +23,7 @@ export default InputField = ({
         secureTextEntry={secureTextEntry}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
+        onChangeText={onChangeText}
       />
       {children}
     </View>
