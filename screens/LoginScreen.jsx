@@ -6,17 +6,29 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import PrimaryScreen from "@/components/PrimaryScreen";
-import InputField from "@/components/InputField";
-import ButtonComponent from "@/components/ButtonComponent";
+import PrimaryScreen from "../components/PrimaryScreen";
+import InputField from "../components/InputField";
+import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
 
-const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const LoginScreen = ({ navigation }) => {
+  const [inputQuery, setInputQuery] = useState({ email: "", password: "" });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const handleLogin = () => {
-    console.log("Email:", email);
-    console.log("Password:", password);
+  const handlerInputChange = (value, input) => {
+    setInputQuery((prev) => ({ ...prev, [input]: value }));
+  };
+
+  const handlerShowPassword = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
+
+  const handlerOnLogin = () => {
+    console.log("Your login information", inputQuery);
+    navigation.navigate("Home");
+  };
+
+  const handlerRegistration = () => {
+    navigation.navigate("Registration");
   };
 
   return (
@@ -26,18 +38,19 @@ const LoginScreen = () => {
           <Text style={styles.title}>Увійти</Text>
           <InputField
             placeholder="Адреса електронної пошти"
-            onChangeText={setEmail}
-          ></InputField>
+            onChangeText={(value) => handlerInputChange(value, "email")}
+          />
           <InputField
             placeholder="Пароль"
             isPassword={true}
-            secureTextEntry={true}
-            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible}
+            onChangeText={(value) => handlerInputChange(value, "password")}
           >
-            <Text style={styles.showPasswordText}>Показати</Text>
+            <Text onPress={handlerShowPassword} style={styles.showPasswordText}>
+              {isPasswordVisible ? "Сховати" : "Показати"}
+            </Text>
           </InputField>
-          <ButtonComponent title="Увійти" onPress={handleLogin} />
-          {/* <ButtonComponent title="Увійти" /> */}
+          <ButtonWidthAll title="Увійти" onPress={handlerOnLogin} />
           <Text style={styles.loginText}>Вже є акаунт? Увійти</Text>
         </View>
       </TouchableWithoutFeedback>

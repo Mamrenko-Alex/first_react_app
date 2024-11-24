@@ -5,7 +5,7 @@ export default PrimaryScreen = ({ children }) => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require("@/assets/images/photo-bg.jpg")}
+        source={require("../assets/images/photo-bg.jpg")}
         style={styles.backgroundImage}
       ></ImageBackground>
       {children}

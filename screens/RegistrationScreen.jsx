@@ -1,9 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import PrimaryScreen from "@/components/PrimaryScreen";
-import InputField from "@/components/InputField";
-import ButtonComponent from "@/components/ButtonComponent";
+import PrimaryScreen from "../components/PrimaryScreen";
+import InputField from "../components/InputField";
+import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
+import AddIcon from "../assets/images/add-icon.svg";
 
 export default RegistrationScreen = () => {
   return (
@@ -11,16 +12,7 @@ export default RegistrationScreen = () => {
       <View style={styles.formContainer}>
         <View style={styles.avatarContainer}>
           <View style={styles.avatarPlaceholder}></View>
-          <Svg
-            width="25"
-            height="25"
-            viewBox="0 0 25 25"
-            fill="none"
-            style={styles.addIconImage}
-          >
-            <Circle cx="12.5" cy="12.5" r="12" fill="white" stroke="#FF6C00" />
-            <Path d="M13 6H12V12H6V13H12V19H13V13H19V12H13V6Z" fill="#FF6C00" />
-          </Svg>
+          <AddIcon style={styles.addIconImage} />
         </View>
         <Text style={styles.title}>Реєстрація</Text>
         <InputField placeholder="Логін"></InputField>
@@ -32,7 +24,7 @@ export default RegistrationScreen = () => {
         >
           <Text style={styles.showPasswordText}>Показати</Text>
         </InputField>
-        <ButtonComponent title="Зареєструватися" />
+        <ButtonWidthAll title="Зареєструватися" />
         <Text style={styles.loginText}>Вже є акаунт? Увійти</Text>
       </View>
     </PrimaryScreen>
