@@ -3,29 +3,43 @@ import { View, StyleSheet, Dimensions } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const MapScreen = ({ route }) => {
-  const { latitude, longitude } = route.params;
+  const { latitude: initialLatitude, longitude: initialLongitude } =
+    route.params;
 
-  const initialRegion = {
-    latitude: latitude,
-    longitude: longitude,
+  const mapInitialRegion = {
+    latitude: initialLatitude,
+    longitude: initialLongitude,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
+  };
+
+  const handleMapReady = () => {
+    console.log("Map successfully loaded");
+  };
+
+  const handleRegionChangeComplete = (region) => {
+    console.log(
+      `🗺️ Region updated: Latitude ${region.latitude}, Longitude ${region.longitude}, Delta (${region.latitudeDelta}, ${region.longitudeDelta})`
+    );
   };
 
   return (
     <View style={styles.screenContainer}>
       <MapView
         style={styles.map}
-        region={initialRegion}
+        initialRegion={mapInitialRegion}
         mapType="standard"
         minZoomLevel={5}
-        onMapReady={() => console.log("Map loaded successfully")}
-        onRegionChange={() => console.log("Region updated")}
+        onMapReady={handleMapReady}
+        onRegionChangeComplete={handleRegionChangeComplete}
         provider={PROVIDER_GOOGLE}
       >
         <Marker
           title="Current Location"
-          coordinate={{ latitude, longitude }}
+          coordinate={{
+            latitude: initialLatitude,
+            longitude: initialLongitude,
+          }}
           description="This is your selected location"
         />
       </MapView>
