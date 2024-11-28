@@ -3,12 +3,13 @@ import {
   StyleSheet,
   View,
   Text,
-  Keyboard,
   TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
-import PrimaryScreen from "../components/PrimaryScreen";
+import BackgroundImg from "../components/BackgroundImg";
 import InputField from "../components/InputField";
 import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
+import AuthPrompt from "../components/AuthPromt";
 
 const LoginScreen = ({ navigation }) => {
   const [inputQuery, setInputQuery] = useState({ email: "", password: "" });
@@ -23,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handlerOnLogin = () => {
-    console.log("Your login information", inputQuery);
+    console.log("User is login", inputQuery);
     navigation.navigate("Home");
   };
 
@@ -32,8 +33,9 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <PrimaryScreen>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={{ flex: 1 }}>
+        <BackgroundImg />
         <View style={styles.formContainer}>
           <Text style={styles.title}>Увійти</Text>
           <InputField
@@ -51,10 +53,15 @@ const LoginScreen = ({ navigation }) => {
             </Text>
           </InputField>
           <ButtonWidthAll title="Увійти" onPress={handlerOnLogin} />
-          <Text style={styles.loginText}>Вже є акаунт? Увійти</Text>
+          <AuthPrompt
+            primeStyle={styles.loginText}
+            handlerTouch={handlerRegistration}
+            answer={"Немає акаунту?"}
+            textBtn={"Зареєструватися"}
+          />
         </View>
-      </TouchableWithoutFeedback>
-    </PrimaryScreen>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -79,7 +86,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: "Roboto",
     fontSize: 30,
-    marginTop: 92,
+    marginTop: 32,
     marginBottom: 32,
   },
   showPasswordText: {

@@ -1,10 +1,10 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
 
-const ButtonWidthAll = ({ onPress, title }) => {
+const ButtonWidthAll = ({ onPress, title, newStyles, newTextStyle }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{title}</Text>
+    <TouchableOpacity style={[styles.button, newStyles]} onPress={onPress}>
+      <Text style={[styles.buttonText, newTextStyle]}>{title}</Text>
     </TouchableOpacity>
   );
 };

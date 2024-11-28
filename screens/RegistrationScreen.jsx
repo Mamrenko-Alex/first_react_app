@@ -1,33 +1,84 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
-import PrimaryScreen from "../components/PrimaryScreen";
+import BackgroundImg from "../components/BackgroundImg";
 import InputField from "../components/InputField";
 import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
-import AddIcon from "../assets/images/add-icon.svg";
+import AddIcon from "../assets/icons/add-icon.svg";
+import AuthPrompt from "../components/AuthPromt";
 
-export default RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
+  const [registerQuery, setRegisterQuery] = useState({
+    login: "",
+    email: "",
+    password: "",
+  });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const handlerInputChange = (value, input) => {
+    setRegisterQuery((prev) => ({ ...prev, [input]: value }));
+  };
+
+  const handlerLogin = () => {
+    navigation.navigate("Login");
+  };
+
+  const handlerShowPassword = () => {
+    setIsPasswordVisible((prev) => !prev);
+  };
+
+  const handlerOnRegistration = () => {
+    console.log("New user is registered", registerQuery);
+    navigation.navigate("Home");
+  };
+
   return (
-    <PrimaryScreen>
-      <View style={styles.formContainer}>
-        <View style={styles.avatarContainer}>
-          <View style={styles.avatarPlaceholder}></View>
-          <AddIcon style={styles.addIconImage} />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ flex: 1 }}>
+        <BackgroundImg />
+        <View style={styles.formContainer}>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatarPlaceholder}></View>
+            <AddIcon style={styles.addIconImage} />
+          </View>
+          <Text style={styles.title}>Реєстрація</Text>
+          <InputField
+            placeholder="Логін"
+            onChangeText={(value) => handlerInputChange(value, "login")}
+          ></InputField>
+          <InputField
+            placeholder="Адреса електронної пошти"
+            onChangeText={(value) => handlerInputChange(value, "email")}
+          ></InputField>
+          <InputField
+            placeholder="Пароль"
+            isPassword={true}
+            secureTextEntry={!isPasswordVisible}
+            onChangeText={(value) => handlerInputChange(value, "password")}
+          >
+            <Text onPress={handlerShowPassword} style={styles.showPasswordText}>
+              {isPasswordVisible ? "Сховати" : "Показати"}
+            </Text>
+          </InputField>
+          <ButtonWidthAll
+            title="Зареєструватися"
+            onPress={handlerOnRegistration}
+          />
+          <AuthPrompt
+            primeStyle={styles.loginText}
+            handlerTouch={handlerLogin}
+            answer={"Немає акаунту?"}
+            textBtn={"Зареєструватися"}
+          />
         </View>
-        <Text style={styles.title}>Реєстрація</Text>
-        <InputField placeholder="Логін"></InputField>
-        <InputField placeholder="Адреса електронної пошти"></InputField>
-        <InputField
-          placeholder="Пароль"
-          isPassword={true}
-          secureTextEntry={true}
-        >
-          <Text style={styles.showPasswordText}>Показати</Text>
-        </InputField>
-        <ButtonWidthAll title="Зареєструватися" />
-        <Text style={styles.loginText}>Вже є акаунт? Увійти</Text>
       </View>
-    </PrimaryScreen>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -87,3 +138,5 @@ const styles = StyleSheet.create({
     marginBottom: 78,
   },
 });
+
+export default RegistrationScreen;
