@@ -1,40 +1,122 @@
+import React, { useState, useRef, useEffect } from "react";
 import {
   Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  Button,
 } from "react-native";
 import { colors } from "../styles/global";
-import { useState } from "react";
-import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
 import CameraIcon from "../assets/icons/camera-icon.svg";
 import LocationIcon from "../assets/icons/location-icon.svg";
+import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
 import LightInputField from "../components/LightInputField";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
+import * as Location from "expo-location";
 
 const { width } = Dimensions.get("window");
 
 const CreatePostsScreen = () => {
   const [inputQuery, setInputQuery] = useState({ name: "", location: "" });
+  const [permission, requestPermission] = useCameraPermissions();
+  const [isPreview, setIsPreview] = useState(false);
+  const [photoUri, setPhotoUri] = useState(null);
+  const cameraRef = useRef(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const checkCameraPermission = async () => {
+      if (!permission || !permission.granted) {
+        const { status } = await requestPermission();
+        if (status !== "granted") {
+          alert("We need your permission to access the camera.");
+        }
+      }
+    };
+
+    checkCameraPermission();
+  }, []);
+
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to access location was denied");
+        return null;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      return {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
+    } catch (error) {
+      console.error("Error getting location:", error);
+      return null;
+    }
+  };
 
   const handlerInputChange = (value, input) => {
     setInputQuery((prev) => ({ ...prev, [input]: value }));
-    console.log(inputQuery);
   };
+
+  const takePicture = async () => {
+    if (cameraRef.current) {
+      const options = { quality: 0.5, base64: true, skipProcessing: true };
+      const data = await cameraRef.current.takePictureAsync(options);
+      const source = data?.uri;
+      if (source) {
+        await cameraRef.current.pausePreview();
+        setIsPreview(true);
+        setPhotoUri(source); // Зберігаємо URI фото
+      }
+    }
+  };
+
+  const handlerCreatePost = async () => {
+    const location = await getCurrentLocation();
+    if (location) {
+      const formattedLocation = `Lat: ${location.latitude}, Lng: ${location.longitude}`;
+      setInputQuery((prev) => ({ ...prev, location: formattedLocation }));
+    }
+
+    navigation.reset({
+      index: 0,
+      routes: [{ name: "Home" }],
+    });
+  };
+
+  // Перевірка, чи всі поля заповнені
+  const isButtonActive =
+    inputQuery.name.trim() !== "" &&
+    inputQuery.location.trim() !== "" &&
+    photoUri !== null;
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <KeyboardAvoidingView style={styles.container}>
-        <View style={styles.containerPhoto}>
-          <CameraIcon />
+        <View style={styles.cameraContainer}>
+          <CameraView style={styles.camera} ref={cameraRef}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.containerPhoto}
+                onPress={takePicture}
+              >
+                <CameraIcon />
+              </TouchableOpacity>
+            </View>
+          </CameraView>
         </View>
+
         <TouchableOpacity style={styles.btnUpload}>
           <Text style={styles.text}>Завантажте фото</Text>
         </TouchableOpacity>
+
         <View style={styles.containerInput}>
           <LightInputField
             primeStyle={styles.borderBottom}
@@ -51,18 +133,23 @@ const CreatePostsScreen = () => {
             onChangeText={(text) => handlerInputChange(text, "location")}
           />
         </View>
+
         <ButtonWidthAll
-          newStyles={{ backgroundColor: colors.lightGrey, marginTop: 32 }}
-          onPress={() => console.log("publish photo")}
+          newStyles={{
+            backgroundColor: isButtonActive ? "#FF6C00" : colors.lightGrey,
+            marginTop: 32,
+          }}
+          onPress={isButtonActive ? handlerCreatePost : null}
           title={"Опублікувати"}
-          newTextStyle={styles.textBtn}
+          newTextStyle={[
+            styles.textBtn,
+            { color: isButtonActive ? "#fff" : colors.gray },
+          ]}
         />
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 };
-
-export default CreatePostsScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -70,8 +157,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: colors.white,
   },
-  containerPhoto: {
+  cameraContainer: {
+    height: 240,
+    borderRadius: 8,
+    overflow: "hidden",
+    marginTop: 32,
     backgroundColor: colors.borderGray,
+  },
+  camera: {
+    flex: 1,
+  },
+  buttonContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  text: {
+    color: colors.gray,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  containerPhoto: {
     borderRadius: 8,
     width: width - 32,
     height: 240,
@@ -81,11 +187,6 @@ const styles = StyleSheet.create({
   },
   btnUpload: {
     marginTop: 8,
-  },
-  text: {
-    color: colors.gray,
-    fontSize: 16,
-    fontWeight: "400",
   },
   containerInput: {
     paddingVertical: 32,
@@ -108,3 +209,5 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
 });
+
+export default CreatePostsScreen;

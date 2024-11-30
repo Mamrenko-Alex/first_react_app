@@ -19,7 +19,7 @@ const MapScreen = ({ route }) => {
 
   const handleRegionChangeComplete = (region) => {
     console.log(
-      `🗺️ Region updated: Latitude ${region.latitude}, Longitude ${region.longitude}, Delta (${region.latitudeDelta}, ${region.longitudeDelta})`
+      `Region updated: Latitude ${region.latitude}, Longitude ${region.longitude}, Delta (${region.latitudeDelta}, ${region.longitudeDelta})`
     );
   };
 
@@ -29,7 +29,6 @@ const MapScreen = ({ route }) => {
         style={styles.map}
         initialRegion={mapInitialRegion}
         mapType="standard"
-        minZoomLevel={5}
         onMapReady={handleMapReady}
         onRegionChangeComplete={handleRegionChangeComplete}
         provider={PROVIDER_GOOGLE}
