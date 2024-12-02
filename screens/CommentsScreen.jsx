@@ -10,6 +10,8 @@ import {
 import { colors } from "../styles/global";
 import CommentsItem from "../components/CommentsItem";
 import ArrowUpIcon from "../assets/icons/arrow-up.svg";
+import InputField from "../components/InputField";
+import { ScrollView } from "react-native-gesture-handler";
 
 const CommentsScreen = () => {
   const [userComment, setUserComment] = useState("");
@@ -25,41 +27,48 @@ const CommentsScreen = () => {
           style={[styles.photo, { marginTop: 32 }]}
           source={require("../assets/images/sunset.jpg")}
         />
-        <View style={styles.commentsSection}>
-          <CommentsItem
-            comment={
-              "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
-            }
-            commentDate={"09 червня, 2020 | 08:40"}
-            icon={require("../assets/images/user-avatar.jpg")}
-            containerStyle={{ flexDirection: "row" }}
-            iconStyle={{ marginRight: 16 }}
-          />
-          <CommentsItem
-            comment={
-              "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
-            }
-            commentDate={"09 червня, 2020 | 09:14"}
-            icon={require("../assets/images/user-avatar.jpg")}
-            containerStyle={{ flexDirection: "row-reverse" }}
-            iconStyle={{ marginLeft: 16 }}
-          />
-          <CommentsItem
-            comment={"Thank you! That was very helpful!"}
-            commentDate={"09 червня, 2020 | 09:20"}
-            icon={require("../assets/images/user-avatar.jpg")}
-            containerStyle={{ flexDirection: "row" }}
-            iconStyle={{ marginRight: 16 }}
-          />
-        </View>
+        <ScrollView
+          style={{
+            flex: 1,
+            marginTop: 32,
+            marginBottom: 32,
+          }}
+        >
+          <View style={styles.commentsSection}>
+            <CommentsItem
+              message={
+                "Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!"
+              }
+              date={"09 червня, 2020 | 08:40"}
+              avatar={require("../assets/images/user-avatar-2.jpg")}
+              containerStyle={{ flexDirection: "row" }}
+              avatarStyle={{ marginRight: 16 }}
+            />
+            <CommentsItem
+              message={
+                "A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images."
+              }
+              date={"09 червня, 2020 | 09:14"}
+              avatar={require("../assets/images/user-avatar.jpg")}
+              containerStyle={{ flexDirection: "row-reverse" }}
+              avatarStyle={{ marginLeft: 16 }}
+            />
+            <CommentsItem
+              message={"Thank you! That was very helpful!"}
+              date={"09 червня, 2020 | 09:20"}
+              avatar={require("../assets/images/user-avatar-2.jpg")}
+              containerStyle={{ flexDirection: "row" }}
+              avatarStyle={{ marginRight: 16 }}
+            />
+          </View>
+        </ScrollView>
         <View style={styles.inputWrapper}>
           <TextInput
             value={userComment}
             onChangeText={handleInputChange}
             placeholder={"Коментувати..."}
-            style={styles.input}
           />
-          <ArrowUpIcon />
+          <ArrowUpIcon style={styles.arow_send} />
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -73,7 +82,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   commentsSection: {
-    paddingTop: 32,
     gap: 24,
   },
   photo: {
@@ -84,7 +92,6 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 32,
     backgroundColor: colors.lightGrey,
     borderRadius: 100,
     borderColor: colors.borderGray,
@@ -95,6 +102,11 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
+  },
+  arow_send: {
+    position: "absolute",
+    right: 8,
+    top: 11,
   },
 });
 
