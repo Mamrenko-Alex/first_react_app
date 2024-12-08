@@ -10,7 +10,6 @@ import {
 import { colors } from "../styles/global";
 import CommentsItem from "../components/CommentsItem";
 import ArrowUpIcon from "../assets/icons/arrow-up.svg";
-import InputField from "../components/InputField";
 import { ScrollView } from "react-native-gesture-handler";
 
 const CommentsScreen = () => {

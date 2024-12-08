@@ -5,13 +5,17 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
+  Image,
+  TouchableOpacity,
 } from "react-native";
 import Svg, { Circle, Path } from "react-native-svg";
 import BackgroundImg from "../components/BackgroundImg";
 import InputField from "../components/InputField";
 import ButtonWidthAll from "../components/Buttons/ButtonWidthAll";
-import AddIcon from "../assets/icons/add-icon.svg";
 import AuthPrompt from "../components/AuthPromt";
+import * as ImagePicker from "expo-image-picker";
+import AddIcon from "../assets/icons/add-icon.svg";
+import CloseIcon from "../assets/icons/close-icon.svg";
 
 const RegistrationScreen = ({ navigation }) => {
   const [registerQuery, setRegisterQuery] = useState({
@@ -20,6 +24,7 @@ const RegistrationScreen = ({ navigation }) => {
     password: "",
   });
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [selectedImg, setSelectedImg] = useState(null);
 
   const handlerInputChange = (value, input) => {
     setRegisterQuery((prev) => ({ ...prev, [input]: value }));
@@ -34,8 +39,32 @@ const RegistrationScreen = ({ navigation }) => {
   };
 
   const handlerOnRegistration = () => {
-    console.log("New user is registered", registerQuery);
+    console.log("New user is registered", registerQuery, selectedImg);
     navigation.navigate("Home");
+  };
+
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert("Access to the media library is required to select an image.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setSelectedImg(uri);
+    }
+  };
+
+  const handlerDeleteAvatar = () => {
+    setSelectedImg(null);
   };
 
   return (
@@ -44,8 +73,21 @@ const RegistrationScreen = ({ navigation }) => {
         <BackgroundImg />
         <View style={styles.formContainer}>
           <View style={styles.avatarContainer}>
-            <View style={styles.avatarPlaceholder}></View>
-            <AddIcon style={styles.addIconImage} />
+            {selectedImg ? (
+              <Image source={{ uri: selectedImg }} style={styles.avatar} />
+            ) : (
+              <View style={styles.avatarPlaceholder}></View>
+            )}
+            <TouchableOpacity
+              style={styles.avatarActionButton}
+              onPress={selectedImg ? handlerDeleteAvatar : pickImage}
+            >
+              {selectedImg ? (
+                <CloseIcon width={24} height={24} />
+              ) : (
+                <AddIcon width={24} height={24} />
+              )}
+            </TouchableOpacity>
           </View>
           <Text style={styles.title}>Реєстрація</Text>
           <InputField
@@ -114,7 +156,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 32,
   },
-  addIconImage: {
+  avatar: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    objectFit: "cover",
+    marginBottom: 32,
+  },
+  avatarActionButton: {
     position: "absolute",
     right: -14,
     bottom: 14,

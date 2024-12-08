@@ -13,11 +13,13 @@ const PostsItem = ({
   place,
   lat,
   lon,
+  postId,
+  comments,
 }) => {
   const navigation = useNavigation();
 
   const navigateToComments = () => {
-    navigation.navigate("Comments");
+    navigation.navigate("Comments", { postId, sourceImg, comments });
   };
 
   const navigateToLocation = () => {

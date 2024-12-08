@@ -4,7 +4,9 @@ import {
   View,
   Text,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   Keyboard,
+  Platform,
 } from "react-native";
 import BackgroundImg from "../components/BackgroundImg";
 import InputField from "../components/InputField";
@@ -37,21 +39,29 @@ const LoginScreen = ({ navigation }) => {
       <View style={{ flex: 1 }}>
         <BackgroundImg />
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Увійти</Text>
-          <InputField
-            placeholder="Адреса електронної пошти"
-            onChangeText={(value) => handlerInputChange(value, "email")}
-          />
-          <InputField
-            placeholder="Пароль"
-            isPassword={true}
-            secureTextEntry={!isPasswordVisible}
-            onChangeText={(value) => handlerInputChange(value, "password")}
+          <KeyboardAvoidingView
+            style={styles.textStyle}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <Text onPress={handlerShowPassword} style={styles.showPasswordText}>
-              {isPasswordVisible ? "Сховати" : "Показати"}
-            </Text>
-          </InputField>
+            <Text style={styles.title}>Увійти</Text>
+            <InputField
+              placeholder="Адреса електронної пошти"
+              onChangeText={(value) => handlerInputChange(value, "email")}
+            />
+            <InputField
+              placeholder="Пароль"
+              isPassword={true}
+              secureTextEntry={!isPasswordVisible}
+              onChangeText={(value) => handlerInputChange(value, "password")}
+            >
+              <Text
+                onPress={handlerShowPassword}
+                style={styles.showPasswordText}
+              >
+                {isPasswordVisible ? "Сховати" : "Показати"}
+              </Text>
+            </InputField>
+          </KeyboardAvoidingView>
           <ButtonWidthAll title="Увійти" onPress={handlerOnLogin} />
           <AuthPrompt
             primeStyle={styles.loginText}
@@ -98,6 +108,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#1B4371",
     marginBottom: 78,
+  },
+  textStyle: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
 });
 
